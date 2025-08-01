@@ -27,4 +27,4 @@ dockerfile
 dist/
 
 
-conf/conf.toml
+conf/*.toml
