@@ -71,4 +71,4 @@ backup_key = ''
 
 [database]
 dialect = 'mysql'
-dsn = 'root:nitamadexianggama@tcp(138.7.34.1:3306)/javin_blog?charset=utf8mb4&parseTime=True&loc=Local' 
+dsn = 'rddoot:nitamadexianggama@tcp(138.7.34.1:3306)/javin_blog?charset=utf8mb4&parseTime=True&loc=Local' 
