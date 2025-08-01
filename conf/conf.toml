@@ -1,0 +1,74 @@
+addr = ':8090'
+signup_enabled = true
+title = '主页'
+session_secret = 'wblog'
+domain = '[!!]'
+file_server = 'smms'
+notify_emails = ''
+page_size = 10
+public = 'static'
+view = 'views/**/*'
+
+
+[seo]
+description = 'javin_log,talk about golang,javascript,python and so on.'
+
+[seo.author]
+name = 'javin9'
+email = 'liujianwei1213@163.com'
+
+[qiniu]
+enabled = false
+accesskey = ''
+secretkey = ''
+fileserver = ''
+bucket = 'wblog'
+
+[smms]
+enabled = false
+apiurl = 'https://sm.ms/api/v2/upload'
+apikey = ''
+
+[github]
+enabled = false
+clientid = ''
+clientsecret = ''
+redirecturl = 'https://example.com/oauth2callback'
+authurl = 'https://github.com/login/oauth/authorize?client_id=%s&scope=user:email&state=%s'
+tokenurl = 'https://github.com/login/oauth/access_token'
+scope = ''
+
+[smtp]
+enabled = false
+username = ''
+password = ''
+host = 'smtp.163.com:25'
+
+[[navigators]]
+title = 'Posts'
+url = '/index'
+target = ''
+
+[[navigators]]
+title = 'AboutMe'
+url = '/page/6'
+target = ''
+
+[[navigators]]
+title = 'RSS'
+url = '/rss'
+target = '_blank'
+
+[[navigators]]
+title = 'Subscribe'
+url = '/subscribe'
+target = ''
+
+[backup]
+enabled = false
+backup_key = ''
+
+
+[database]
+dialect = 'mysql'
+dsn = 'root:nitamadexianggama@tcp(138.7.34.1:3306)/javin_blog?charset=utf8mb4&parseTime=True&loc=Local' 
