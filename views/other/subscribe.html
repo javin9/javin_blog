@@ -1,11 +1,11 @@
-{{define "other/subscribe.html"}}
+<% define "other/subscribe.html" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {{template "meta.html" .}}
+    <% template "meta.html" . %>
 
     <title>冰箱太凉的博客 - 订阅</title>
 
@@ -32,14 +32,14 @@
   </head>
 
   <body>
-    {{template "navigation.html" .}}
+    <% template "navigation.html" . %>
 
     <div class="container">
-      {{if .message}}
+      <% if .message %>
       <div class="alert alert-warning" role="alert">
-        <a href="#" class="alert-link">{{.message}}</a>
+        <a href="#" class="alert-link"><% .message %></a>
       </div>
-      {{end}}
+      <% end %>
 
       <form class="form-inline" method="post">
         <div class="form-group">
@@ -47,9 +47,9 @@
           <input type="email" name="mail" class="form-control" id="emailInput" placeholder="Email" />
         </div>
         <button type="submit" class="btn btn-primary">订阅</button>
-        <span>共{{.total}}人订阅</span>
+        <span>共<% .total %>人订阅</span>
       </form>
     </div>
   </body>
 </html>
-{{end}}
+<% end %>

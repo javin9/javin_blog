@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "debug wlog",
+      "name": "debug_javin_blog",
       "type": "go",
       "request": "launch",
       "mode": "auto",

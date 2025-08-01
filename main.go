@@ -192,6 +192,9 @@ func setTemplate(engine *gin.Engine) {
 	}
 
 	engine.SetFuncMap(funcMap)
+	// 修改模板分隔符为 <% %>
+	engine.Delims("<%", "%>")
+
 	fmt.Print("helpers.GetCurrentDirectory() = ", helpers.GetCurrentDirectory())
 	fmt.Print("system.GetConfiguration().ViewDir = ", system.GetConfiguration().ViewDir)
 	engine.LoadHTMLGlob(filepath.Join(helpers.GetCurrentDirectory(), system.GetConfiguration().ViewDir))

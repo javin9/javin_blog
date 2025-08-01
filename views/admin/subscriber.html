@@ -1,4 +1,4 @@
-{{define "admin/subscriber.html"}}
+<% define "admin/subscriber.html" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,8 +35,8 @@
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
-    {{template "admin/navbar.html" .}}
-    {{template "admin/sidebar.html" .}}
+    <% template "admin/navbar.html" . %>
+    <% template "admin/sidebar.html" . %>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -73,26 +73,26 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {{range .subscribers}}
+                                <% range .subscribers %>
                                 <tr>
-                                    <td>{{.ID}}</td>
-                                    <td>{{.Email}}</td>
+                                    <td><% .ID %></td>
+                                    <td><% .Email %></td>
                                     <td>
-                                        <a href="javascript:void(0);"> {{if .VerifyState}}√{{else}}×{{end}}</a>
+                                        <a href="javascript:void(0);"> <% if .VerifyState %>√<% else %>×<% end %></a>
                                     </td>
                                     <td>
-                                        <a href="javascript:void(0);"> {{if .SubscribeState}}√{{else}}×{{end}}</a>
+                                        <a href="javascript:void(0);"> <% if .SubscribeState %>√<% else %>×<% end %></a>
                                     </td>
-                                    <td>{{dateFormat .CreatedAt "06-01-02 15:04"}}</td>
+                                    <td><% dateFormat .CreatedAt "06-01-02 15:04" %></td>
                                     <td>
-                                        {{if .VerifyState}}
-                                        {{if .SubscribeState}}
-                                        <a href="javascript:void(0);" class="btn btn-primary btnsend" data-href="/admin/new_mail?userId={{.ID}}" data-toggle="modal" data-target="#confirm-delete">发邮件</a>
-                                        {{end}}
-                                        {{end}}
+                                        <% if .VerifyState %>
+                                        <% if .SubscribeState %>
+                                        <a href="javascript:void(0);" class="btn btn-primary btnsend" data-href="/admin/new_mail?userId=<% .ID %>" data-toggle="modal" data-target="#confirm-delete">发邮件</a>
+                                        <% end %>
+                                        <% end %>
                                     </td>
                                 </tr>
-                                {{end}}
+                                <% end %>
                                 </tfoot>
                             </table>
                         </div>
@@ -208,4 +208,4 @@
 </script>
 </body>
 </html>
-{{end}}
+<% end %>

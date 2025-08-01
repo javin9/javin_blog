@@ -1,4 +1,4 @@
-{{define "auth/signin.html"}}
+<% define "auth/signin.html" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -28,6 +28,7 @@
     <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" />
   </head>
+
   <body class="hold-transition login-page">
     <div class="login-box">
       <div class="login-logo">
@@ -35,11 +36,11 @@
       </div>
       <!-- /.login-logo -->
       <div class="login-box-body">
-        {{if not .message}}
+        <% if not .message %>
         <p class="login-box-msg">登录</p>
-        {{else}}
-        <p class="login-box-msg text-danger">{{.message}}</p>
-        {{end}}
+        <% else %>
+        <p class="login-box-msg text-danger"><% .message %></p>
+        <% end %>
 
         <form action="" method="post">
           <div class="form-group has-feedback">
@@ -64,18 +65,18 @@
           </div>
         </form>
 
-        {{if .cfg.Github.Enabled }}
+        <% if .cfg.Github.Enabled %>
         <div class="social-auth-links text-center">
           <p>- OR -</p>
           <a href="/auth/github" class="btn btn-block btn-social btn-github btn-flat"><i class="fa fa-github"></i> Sign in using Github</a>
         </div>
-        {{end}}
+        <% end %>
         <!-- /.social-auth-links -->
 
         <!--<a href="#">I forgot my password</a><br>-->
-        {{if .cfg.SignupEnabled }}
+        <% if .cfg.SignupEnabled %>
         <a href="/signup" class="text-center">注册一个新用户</a>
-        {{end}}
+        <% end %>
       </div>
       <!-- /.login-box-body -->
     </div>
@@ -98,4 +99,4 @@
     </script>
   </body>
 </html>
-{{end}}
+<% end %>

@@ -121,7 +121,7 @@ func SigninPost(c *gin.Context) {
 	}
 	user, err = models.GetUserByUsername(username)
 	if err != nil || user.Password != helpers.Md5(username+password) {
-		c.HTML(http.StatusOK, "auth/signin.html", gin.H{
+		c.HTML(http.StatusOK, "auth/signup.html", gin.H{
 			"message": "invalid username or password",
 			"cfg":     system.GetConfiguration(),
 		})
