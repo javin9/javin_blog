@@ -31,34 +31,34 @@
   <body class="hold-transition login-page">
     <div class="login-box">
       <div class="login-logo">
-        <a href="/"><b>W</b>blog</a>
+        <a href="/"><b>冰</b>箱太凉博客</a>
       </div>
       <!-- /.login-logo -->
       <div class="login-box-body">
         {{if not .message}}
-        <p class="login-box-msg">Sign in to start your session</p>
+        <p class="login-box-msg">登录</p>
         {{else}}
         <p class="login-box-msg text-danger">{{.message}}</p>
         {{end}}
 
         <form action="" method="post">
           <div class="form-group has-feedback">
-            <input type="email" name="username" class="form-control" placeholder="Email" />
+            <input type="email" name="username" class="form-control" placeholder="邮箱" />
             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
           </div>
           <div class="form-group has-feedback">
-            <input type="password" name="password" class="form-control" placeholder="Password" />
+            <input type="password" name="password" class="form-control" placeholder="密码" />
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
           </div>
           <div class="row">
             <div class="col-xs-8">
               <div class="checkbox icheck">
-                <label> <input type="checkbox" /> Remember Me </label>
+                <label> <input type="checkbox" /> 记住我 </label>
               </div>
             </div>
             <!-- /.col -->
             <div class="col-xs-4">
-              <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+              <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
             </div>
             <!-- /.col -->
           </div>
@@ -74,7 +74,7 @@
 
         <!--<a href="#">I forgot my password</a><br>-->
         {{if .cfg.SignupEnabled }}
-        <a href="/signup" class="text-center">Register a new membership</a>
+        <a href="/signup" class="text-center">注册一个新用户</a>
         {{end}}
       </div>
       <!-- /.login-box-body -->
