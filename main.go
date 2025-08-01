@@ -198,12 +198,23 @@ func setTemplate(engine *gin.Engine) {
 }
 
 // setSessions initializes sessions & csrf middlewares
+// 初始化会话存储
 func setSessions(router *gin.Engine) {
 	config := system.GetConfiguration()
 	//https://github.com/gin-gonic/contrib/tree/master/sessions
+	// 创建基于Cookie的存储
 	store := cookie.NewStore([]byte(config.SessionSecret))
-	store.Options(sessions.Options{HttpOnly: true, MaxAge: 7 * 86400, Path: "/"}) //Also set Secure: true if using SSL, you should though
+
+	// 设置会话选项
+	store.Options(sessions.Options{
+		HttpOnly: true,      // 防止XSS攻击
+		MaxAge:   7 * 86400, // 7天过期（秒）
+		Path:     "/",       // Cookie路径
+		// Secure: true,       // HTTPS下设置为true
+	})
+	//// 注册会话中间件
 	router.Use(sessions.Sessions("gin-session", store))
+
 	//https://github.com/utrack/gin-csrf
 	/*router.Use(csrf.Middleware(csrf.Options{
 		Secret: config.SessionSecret,
@@ -219,7 +230,9 @@ func setSessions(router *gin.Engine) {
 // SharedData fills in common data, such as user info, etc...
 func SharedData() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 获取会话
 		session := sessions.Default(c)
+		// 从会话中获取用户ID
 		uID := session.Get(controllers.SessionKey)
 		if uID != nil {
 			user, err := models.GetUser(uID)
@@ -231,15 +244,6 @@ func SharedData() gin.HandlerFunc {
 			c.Set("SignupEnabled", true)
 		}
 		c.Next()
-		// uID := 3
-		// user, err := models.GetUser(uID)
-		// if err == nil {
-		// 	c.Set(controllers.ContextUserKey, user)
-		// }
-		// if system.GetConfiguration().SignupEnabled {
-		// 	c.Set("SignupEnabled", true)
-		// }
-		// c.Next()
 	}
 }
 
