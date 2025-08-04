@@ -103,6 +103,12 @@ func SignupPost(c *gin.Context) {
 		return
 	}
 	c.Redirect(http.StatusFound, "/signin")
+
+}
+
+type SigninRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func SigninPost(c *gin.Context) {
@@ -110,8 +116,13 @@ func SigninPost(c *gin.Context) {
 		err  error
 		user *models.User
 	)
-	username := c.PostForm("username")
-	password := c.PostForm("password")
+	var req SigninRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	username := req.Username
+	password := req.Password
 	if username == "" || password == "" {
 		c.HTML(http.StatusOK, "auth/signin.html", gin.H{
 			"message": "username or password cannot be null",
@@ -139,9 +150,9 @@ func SigninPost(c *gin.Context) {
 	s.Set(SessionKey, user.ID)
 	s.Save()
 	if user.IsAdmin {
-		c.Redirect(http.StatusMovedPermanently, "/admin/index")
+		c.JSON(http.StatusOK, gin.H{"message": "login success", "redirect": "/admin/index"})
 	} else {
-		c.Redirect(http.StatusMovedPermanently, "/")
+		c.JSON(http.StatusOK, gin.H{"message": "login success", "redirect": "/"})
 	}
 }
 

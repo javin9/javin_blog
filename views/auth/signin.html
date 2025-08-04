@@ -31,7 +31,6 @@
 
   <body class="hold-transition login-page">
     <div class="login-box" id="app">
-      <div>{{ message }}</div>
       <div class="login-logo">
         <a href="/"><b>冰</b>箱太凉博客</a>
       </div>
@@ -43,24 +42,24 @@
         <p class="login-box-msg text-danger"><% .message %></p>
         <% end %>
 
-        <form action="" method="post">
+        <form>
           <div class="form-group has-feedback">
-            <input type="email" name="username" class="form-control" placeholder="邮箱" />
+            <input type="email" name="username" class="form-control" placeholder="邮箱" v-model="username" />
             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
           </div>
           <div class="form-group has-feedback">
-            <input type="password" name="password" class="form-control" placeholder="密码" />
+            <input type="password" name="password" v-model="password" class="form-control" placeholder="密码" />
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
           </div>
           <div class="row">
             <div class="col-xs-8">
-              <div class="checkbox icheck">
-                <label> <input type="checkbox" /> 记住我 </label>
-              </div>
+              <!-- <div class="checkbox icheck">
+                <label> <input type="checkbox" v-model="remember" /> 记住我 </label>
+              </div> -->
             </div>
             <!-- /.col -->
             <div class="col-xs-4">
-              <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
+              <button type="button" @click="handleLogin" class="btn btn-primary btn-block btn-flat">登录</button>
             </div>
             <!-- /.col -->
           </div>
@@ -90,6 +89,7 @@
     <!-- iCheck -->
     <script src="/static/libs/iCheck/icheck.min.js"></script>
     <script src="/static/libs/vue/vue.global.prod.js"></script>
+    <script src="/static/libs/axios/axios.min.js"></script>
     <script>
       $(function () {
         $("input").iCheck({
@@ -97,12 +97,31 @@
           radioClass: "iradio_square-blue",
           increaseArea: "20%", // optional
         });
-
+        console.log(axios);
         const app = Vue.createApp({
           data() {
             return {
               message: "Hello Vue!",
+              username: "",
+              password: "",
+              remember: false,
             };
+          },
+          methods: {
+            handleLogin() {
+              console.log(this.username, this.password, this.remember);
+              axios
+                .post("/signin", {
+                  username: this.username,
+                  password: this.password,
+                })
+                .then((res) => {
+                  console.log(res);
+                  if (res.data.redirect) {
+                    window.location.href = res.data.redirect;
+                  }
+                });
+            },
           },
         });
 
