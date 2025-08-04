@@ -30,7 +30,8 @@
   </head>
 
   <body class="hold-transition login-page">
-    <div class="login-box">
+    <div class="login-box" id="app">
+      <div>{{ message }}</div>
       <div class="login-logo">
         <a href="/"><b>冰</b>箱太凉博客</a>
       </div>
@@ -88,6 +89,7 @@
     <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
     <!-- iCheck -->
     <script src="/static/libs/iCheck/icheck.min.js"></script>
+    <script src="/static/libs/vue/vue.global.prod.js"></script>
     <script>
       $(function () {
         $("input").iCheck({
@@ -95,6 +97,16 @@
           radioClass: "iradio_square-blue",
           increaseArea: "20%", // optional
         });
+
+        const app = Vue.createApp({
+          data() {
+            return {
+              message: "Hello Vue!",
+            };
+          },
+        });
+
+        app.mount("#app");
       });
     </script>
   </body>

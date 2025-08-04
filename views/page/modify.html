@@ -118,7 +118,9 @@
         <form action="/admin/page/<% .page.ID %>/edit" method="post" id="pageForm" class="form-group">
           <input name="title" type="text" class="form-control" placeholder="Title" value="<% .page.Title %>" /><br />
           <textarea id="demo" name="body"><% .page.Body %></textarea><br />
-          <div class="bootstrap-switch-small"><input id="switchbtn" name="isPublished" type="checkbox" <% if .page.IsPublished % />checked<% end %> /></div>
+          <div class="bootstrap-switch-small">
+            <input id="switchbtn" name="isPublished" type="checkbox" <% if .page.IsPublished %>checked<% end %> /></input>
+          </div>
         </form>
       </div>
     </div>

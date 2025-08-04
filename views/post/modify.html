@@ -163,7 +163,7 @@
             <a class="removeArticleTag" href="#" onclick="deleteTag(this);">
               <span class="glyphicon glyphicon glyphicon-trash"></span>
             </a>
-            <span class="tagId" hidden="hidden"><% $tagvalue.ID %></span></button
+                  <span class="tagId" hidden="hidden"><% $tagvalue.ID %></span></button
           >&nbsp; <% end %>
           <span style="border: none" id="addTag" class="glyphicon glyphicon-edit"></span>
           <a id="postSave" class="glyphicon glyphicon-saved" style="float: right; padding-left: 15px"></a> </span
@@ -174,7 +174,9 @@
           <input id="tags" name="tags" type="hidden" />
           <input name="title" type="text" class="form-control" placeholder="Title" value="<% .post.Title %>" /><br />
           <textarea id="demo" name="body"><% .post.Body %></textarea><br />
-          <div class="bootstrap-switch-small"><input id="switchbtn" name="isPublished" type="checkbox" <% if .post.IsPublished % />checked<% end %> /></div>
+          <div class="bootstrap-switch-small">
+            <input id="switchbtn" name="isPublished" type="checkbox" <% if .post.IsPublished %>checked<% end %></input>
+          </div>
         </form>
       </div>
     </div>
