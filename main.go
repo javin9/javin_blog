@@ -69,7 +69,8 @@ func main() {
 	router.Static("/static", filepath.Join(helpers.GetCurrentDirectory(), system.GetConfiguration().PublicDir))
 
 	router.NoRoute(controllers.Handle404)
-	router.GET("/", controllers.IndexGet)
+	router.GET("/post/search", controllers.PostSearch)
+	// router.GET("/", controllers.IndexGet)
 	router.GET("/index", controllers.IndexGet)
 	router.GET("/rss", controllers.RssGet)
 
@@ -92,6 +93,7 @@ func main() {
 	{
 		visitor.POST("/new_comment", controllers.CommentPost)
 		visitor.POST("/comment/:id/delete", controllers.CommentDelete)
+		visitor.GET("/search", controllers.PostSearch)
 	}
 
 	// subscriber

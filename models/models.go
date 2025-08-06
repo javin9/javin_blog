@@ -16,9 +16,9 @@ import (
 
 // I don't need soft delete,so I use customized BaseModel instead gorm.Model
 type BaseModel struct {
-	ID        uint `gorm:"primary_key"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uint      `gorm:"primary_key" json:"post_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // table pages
@@ -33,13 +33,13 @@ type Page struct {
 // table posts
 type Post struct {
 	BaseModel
-	Title        string     `gorm:"type:text"`     // title
-	Body         string     `gorm:"type:longtext"` // body
-	View         int        // view count
-	IsPublished  bool       // published or not
-	Tags         []*Tag     `gorm:"-"`  // tags of post
-	Comments     []*Comment `gorm:"-"`  // comments of post
-	CommentTotal int        `gorm:"->"` // count of comment
+	Title        string     `gorm:"type:text" json:"title"`    // title
+	Body         string     `gorm:"type:longtext" json:"body"` // body
+	View         int        `json:"view" `                     // view count
+	IsPublished  bool       `json:"is_published"`              // published or not
+	Tags         []*Tag     `gorm:"-" json:"tags"`             // tags of post
+	Comments     []*Comment `gorm:"-" json:"comments"`         // comments of post
+	CommentTotal int        `gorm:"->" json:"comment_total"`   // count of comment
 }
 
 // table tags
@@ -700,4 +700,69 @@ func GetLinkById(id uint) (*Link, error) {
 func (sf SmmsFile) Insert() (err error) {
 	err = DB.Create(&sf).Error
 	return
+}
+
+// keyword search post 的title和content
+// CommentTotal默认 0
+
+func SearchPostList(keyword string, CommentTotal int) ([]Post, error) {
+	var posts []Post
+	var args []interface{}
+
+	// 基础条件：已发布的文章
+	condition := "is_published = ?"
+	args = append(args, true)
+
+	// 如果 CommentTotal 大于 0，添加评论数条件
+	if CommentTotal > 0 {
+		condition += " and comment_total >= ?"
+		args = append(args, CommentTotal)
+	}
+
+	// 如果关键词不为空，添加搜索条件
+	if len(keyword) > 0 {
+		condition += " and (title like ? or body like ?)"
+		args = append(args, "%"+keyword+"%", "%"+keyword+"%")
+	}
+
+	err := DB.Where(condition, args...).Order("created_at desc").Find(&posts).Error
+	return posts, err
+}
+
+type SearchOptions struct {
+	Keyword      string
+	CommentTotal int
+	Limit        int
+	Offset       int
+	IsPublish    bool
+}
+
+func SearchPostListWithOptions(options SearchOptions) ([]Post, error) {
+	var posts []Post
+	query := DB.Model(&Post{})
+
+	if options.IsPublish {
+		query = query.Where("is_published = ?", true)
+	}
+
+	if options.CommentTotal > 0 {
+		query = query.Where("comment_total >= ?", options.CommentTotal)
+	}
+
+	if options.Keyword != "" {
+		query = query.Where("title LIKE ? OR body LIKE ?", "%"+options.Keyword+"%", "%"+options.Keyword+"%")
+	}
+
+	query = query.Order("created_at desc")
+
+	if options.Limit > 0 {
+		query = query.Limit(options.Limit)
+	}
+
+	if options.Offset > 0 {
+		query = query.Offset(options.Offset)
+	}
+
+	err := query.Find(&posts).Error
+	return posts, err
 }

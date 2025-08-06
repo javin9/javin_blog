@@ -3,12 +3,19 @@ package controllers
 import (
 	"javin_blog/system"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"javin_blog/models"
 
 	"github.com/gin-gonic/gin"
 )
+
+type Response struct {
+	Code    int         `json:"code"`
+	Data    interface{} `json:"data"`
+	Message string      `json:"message"`
+}
 
 func PostGet(c *gin.Context) {
 	id, err := ParamUint(c, "id")
@@ -30,6 +37,65 @@ func PostGet(c *gin.Context) {
 		"post": post,
 		"user": user,
 		"cfg":  system.GetConfiguration(),
+	})
+}
+
+func PostSearch(c *gin.Context) {
+	var limitInt, pageInt, commentTotalInt int
+	keyword := c.Query("keyword")
+	isPublished := c.Query("isPublished")
+	commentTotal := c.Query("commentTotal")
+
+	if commentTotal == "" {
+		commentTotalInt = 0
+	} else {
+		_, err := strconv.Atoi(commentTotal)
+		if err != nil {
+			commentTotalInt = 0
+		}
+	}
+
+	limit := c.Query("limit")
+	if limit == "" {
+		limitInt = 10
+	} else {
+		_, err := strconv.Atoi(limit)
+		if err != nil {
+			limitInt = 10
+		}
+	}
+
+	page := c.Query("page")
+	if page == "" {
+		pageInt = 1
+	} else {
+		_, err := strconv.Atoi(page)
+		if err != nil {
+			pageInt = 1
+		}
+	}
+
+	postList, err := models.SearchPostListWithOptions(models.SearchOptions{
+		Keyword:      keyword,
+		IsPublish:    isPublished == "1",
+		Limit:        limitInt,
+		Offset:       pageInt,
+		CommentTotal: commentTotalInt,
+	})
+
+	if err != nil {
+		c.JSON(http.StatusOK, Response{
+			Code:    1,
+			Data:    nil,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, Response{
+		Code:    0,
+		Data:    postList,
+		Message: "success",
 	})
 }
 
