@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"javin_blog/system"
 	"net/http"
 	"strconv"
@@ -276,15 +277,21 @@ func PostSearch(c *gin.Context) {
 }
 
 type SearchParams struct {
-	Keyword      string `json:"keyword"`
-	IsPublished  int    `json:"isPublished"`
-	CommentTotal int    `json:"commentTotal"`
-	Limit        int    `json:"limit"`
-	Page         int    `json:"page"`
+	// Keyword      string `json:"keyword"`
+	// IsPublished  int    `json:"isPublished"`
+	// CommentTotal int    `json:"commentTotal"`
+	// Limit        int    `json:"limit"`
+	// Page         int    `json:"page"`
+	Keyword      string `form:"keyword"`
+	IsPublished  int    `form:"isPublished"`
+	CommentTotal int    `form:"commentTotal"`
+	Limit        int    `form:"limit"`
+	Page         int    `form:"page"`
 }
 
 func PostSearch2(c *gin.Context) {
 	var params SearchParams
+	// c.ShouldBindJSON()
 	if err := c.ShouldBindQuery(&params); err != nil {
 		c.JSON(http.StatusBadRequest, Response{
 			Code:    1,
@@ -302,10 +309,12 @@ func PostSearch2(c *gin.Context) {
 		CommentTotal: params.CommentTotal,
 	})
 
+	fmt.Println(result)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Response{
 			Code:    1,
-			Data:    nil,
+			Data:    []models.SearchResult{},
 			Message: err.Error(),
 		})
 		return
