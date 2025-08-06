@@ -40,65 +40,6 @@ func PostGet(c *gin.Context) {
 	})
 }
 
-func PostSearch(c *gin.Context) {
-	var limitInt, pageInt, commentTotalInt int
-	keyword := c.Query("keyword")
-	isPublished := c.Query("isPublished")
-	commentTotal := c.Query("commentTotal")
-
-	if commentTotal == "" {
-		commentTotalInt = 0
-	} else {
-		_, err := strconv.Atoi(commentTotal)
-		if err != nil {
-			commentTotalInt = 0
-		}
-	}
-
-	limit := c.Query("limit")
-	if limit == "" {
-		limitInt = 10
-	} else {
-		_, err := strconv.Atoi(limit)
-		if err != nil {
-			limitInt = 10
-		}
-	}
-
-	page := c.Query("page")
-	if page == "" {
-		pageInt = 1
-	} else {
-		_, err := strconv.Atoi(page)
-		if err != nil {
-			pageInt = 1
-		}
-	}
-
-	postList, err := models.SearchPostListWithOptions(models.SearchOptions{
-		Keyword:      keyword,
-		IsPublish:    isPublished == "1",
-		Limit:        limitInt,
-		Offset:       pageInt,
-		CommentTotal: commentTotalInt,
-	})
-
-	if err != nil {
-		c.JSON(http.StatusOK, Response{
-			Code:    1,
-			Data:    nil,
-			Message: err.Error(),
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, Response{
-		Code:    0,
-		Data:    postList,
-		Message: "success",
-	})
-}
-
 func PostNew(c *gin.Context) {
 	c.HTML(http.StatusOK, "post/new.html", gin.H{
 		"user": c.MustGet(ContextUserKey),
@@ -271,5 +212,108 @@ func PostIndex(c *gin.Context) {
 		"user":     c.MustGet(ContextUserKey),
 		"comments": models.MustListUnreadComment(),
 		"cfg":      system.GetConfiguration(),
+	})
+}
+
+// 搜索
+func PostSearch(c *gin.Context) {
+	var limitInt, pageInt, commentTotalInt int
+	keyword := c.Query("keyword")
+	isPublished := c.Query("isPublished")
+	commentTotal := c.Query("commentTotal")
+
+	if commentTotal == "" {
+		commentTotalInt = 0
+	} else {
+		_, err := strconv.Atoi(commentTotal)
+		if err != nil {
+			commentTotalInt = 0
+		}
+	}
+
+	limit := c.Query("limit")
+	if limit == "" {
+		limitInt = 10
+	} else {
+		_, err := strconv.Atoi(limit)
+		if err != nil {
+			limitInt = 10
+		}
+	}
+
+	page := c.Query("page")
+	if page == "" {
+		pageInt = 1
+	} else {
+		_, err := strconv.Atoi(page)
+		if err != nil {
+			pageInt = 1
+		}
+	}
+
+	postList, err := models.SearchPostListWithOptions(models.SearchOptions{
+		Keyword:      keyword,
+		IsPublish:    isPublished == "1",
+		Limit:        limitInt,
+		Offset:       pageInt,
+		CommentTotal: commentTotalInt,
+	})
+
+	if err != nil {
+		c.JSON(http.StatusOK, Response{
+			Code:    1,
+			Data:    nil,
+			Message: err.Error(),
+		})
+		return
+	}
+	// 返回 总数和当前页数 怎么改下面的返回
+	c.JSON(http.StatusOK, Response{
+		Code:    0,
+		Data:    postList,
+		Message: "success",
+	})
+}
+
+type SearchParams struct {
+	Keyword      string `json:"keyword"`
+	IsPublished  int    `json:"isPublished"`
+	CommentTotal int    `json:"commentTotal"`
+	Limit        int    `json:"limit"`
+	Page         int    `json:"page"`
+}
+
+func PostSearch2(c *gin.Context) {
+	var params SearchParams
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.JSON(http.StatusBadRequest, Response{
+			Code:    1,
+			Data:    nil,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	result, err := models.SearchPostListWithOptions(models.SearchOptions{
+		Keyword:      params.Keyword,
+		IsPublish:    params.IsPublished == 1,
+		Limit:        params.Limit,
+		Offset:       params.Page,
+		CommentTotal: params.CommentTotal,
+	})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, Response{
+			Code:    1,
+			Data:    nil,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, Response{
+		Code:    0,
+		Data:    result,
+		Message: "success",
 	})
 }

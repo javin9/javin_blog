@@ -70,6 +70,7 @@ func main() {
 
 	router.NoRoute(controllers.Handle404)
 	router.GET("/post/search", controllers.PostSearch)
+	router.GET("/post/search2", controllers.PostSearch2)
 	// router.GET("/", controllers.IndexGet)
 	router.GET("/index", controllers.IndexGet)
 	router.GET("/rss", controllers.RssGet)

@@ -12,6 +12,7 @@ import (
 	"github.com/russross/blackfriday"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // I don't need soft delete,so I use customized BaseModel instead gorm.Model
@@ -136,13 +137,19 @@ func InitDB() (*gorm.DB, error) {
 		cfg = system.GetConfiguration()
 	)
 
-	db, err = gorm.Open(mysql.Open(cfg.Database.DSN), &gorm.Config{})
+	db, err = gorm.Open(mysql.Open(cfg.Database.DSN), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info), // 启用 SQL 日志
+		// 可选的其他日志级别：
+		// logger.Silent - 静默模式，不打印任何日志
+		// logger.Error - 只打印错误日志
+		// logger.Warn - 打印警告和错误日志
+		// logger.Info - 打印所有 SQL 语句（推荐用于开发）
+	})
 	if err != nil {
 		return nil, err
 	}
 	DB = db
 
-	//db.LogMode(true)
 	db.AutoMigrate(&Page{}, &Post{}, &Tag{}, &PostTag{}, &User{}, &Comment{}, &Subscriber{}, &Link{}, &SmmsFile{})
 	return db, err
 }
@@ -737,32 +744,87 @@ type SearchOptions struct {
 	IsPublish    bool
 }
 
-func SearchPostListWithOptions(options SearchOptions) ([]Post, error) {
+// 搜索结果结构体
+type SearchResult struct {
+	Posts       []Post `json:"posts"`        // 文章列表
+	Total       int64  `json:"total"`        // 总数
+	PageSize    int    `json:"page_size"`    // 每页大小
+	CurrentPage int    `json:"current_page"` // 当前页数
+	TotalPages  int    `json:"total_pages"`  // 总页数
+}
+
+// 返回 总数和当前页数 怎么改下面的返回
+func SearchPostListWithOptions(options SearchOptions) (*SearchResult, error) {
 	var posts []Post
+	var total int64
+
+	var limit, page, commentTotal int
+	if options.Limit == 0 {
+		limit = 10
+	} else {
+		limit = options.Limit
+	}
+	if options.Offset == 0 {
+		page = 0
+	} else {
+		page = options.Offset
+	}
+	if options.CommentTotal == 0 {
+		commentTotal = 0
+	} else {
+		commentTotal = options.CommentTotal
+	}
+
+	// 构建基础查询
 	query := DB.Model(&Post{})
 
 	if options.IsPublish {
 		query = query.Where("is_published = ?", true)
 	}
 
-	if options.CommentTotal > 0 {
-		query = query.Where("comment_total >= ?", options.CommentTotal)
+	if commentTotal > 0 {
+		query = query.Where("comment_total >= ?", commentTotal)
 	}
 
 	if options.Keyword != "" {
 		query = query.Where("title LIKE ? OR body LIKE ?", "%"+options.Keyword+"%", "%"+options.Keyword+"%")
 	}
 
+	// 先获取总数
+	err := query.Count(&total).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// 添加排序和分页
 	query = query.Order("created_at desc")
+	query = query.Limit(limit)
+	query = query.Offset(page)
 
-	if options.Limit > 0 {
-		query = query.Limit(options.Limit)
+	// 获取数据
+	err = query.Find(&posts).Error
+	if err != nil {
+		return nil, err
 	}
 
-	if options.Offset > 0 {
-		query = query.Offset(options.Offset)
+	// 计算分页信息
+	currentPage := 1
+	if limit > 0 && page > 0 {
+		currentPage = (page / limit) + 1
 	}
 
-	err := query.Find(&posts).Error
-	return posts, err
+	totalPages := 1
+	if limit > 0 {
+		totalPages = int((total + int64(limit) - 1) / int64(limit))
+	}
+
+	result := &SearchResult{
+		Posts:       posts,
+		Total:       total,
+		PageSize:    limit,
+		CurrentPage: currentPage,
+		TotalPages:  totalPages,
+	}
+
+	return result, nil
 }
